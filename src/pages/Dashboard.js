@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import LoginService from "../services/login.service";
-import { logout } from "../actions/login";
+import { logout } from "../store/actions/login";
 
 import "../css/Login.css";
 
@@ -11,7 +11,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { userInfo } = useSelector((state) => state.loginReducers); 
+  const { userInfo } = useSelector((state) => state.login); 
 
   const handleLogout = (e) => {
     e.preventDefault();

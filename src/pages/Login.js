@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { login } from "../actions/login";
+import { login } from "../store/actions/login";
 import LoginService from "../services/login.service";
 
 import "../css/Login.css";
@@ -12,7 +12,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const { isLoggedIn } = useSelector((state) => state.loginReducers);
+  const { isLoggedIn } = useSelector((state) => state.login);
 
   const history = useHistory();
   const dispatch = useDispatch();
