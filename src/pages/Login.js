@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { useHistory, Redirect } from "react-router-dom";
+import {  Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { login } from "../store/actions/login";
-import LoginService from "../services/login.service";
+import { loginAsync } from "../thunks/login";
 
 import "../css/Login.css";
-import "../css/bootstrap.min.css";
+import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const { isLoggedIn } = useSelector((state) => state.login);
+  const { isLoading, isLoggedIn, error } = useSelector((state) => state.login);
 
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
@@ -24,21 +22,12 @@ const Login = () => {
       username: username,
       password: password,
     };
-
-    const response = await LoginService.login(data) 
-    // .then((response) => {
-    //   return response
-    // })
-    // .catch((error)=>{
-
-    // });
-
-    await dispatch(login(response ?? ""));
-    await history.push("/dashboard");
+    
+    await dispatch(loginAsync(data));
   };
 
   if (isLoggedIn) {
-    return <Redirect to="/dashboard" />;
+    return <Navigate to="/dashboard" />;
   }
 
   return (
@@ -62,13 +51,17 @@ const Login = () => {
             onInput={(e) => setPassword(e.target.value)}
           />
         </label>
- 
+
         <div className="form-group">
           <button className="btn btn-primary btn-block" type="submit">
             <span>Login</span>
           </button>
         </div>
       </form>
+      <div className="form-group">
+        {isLoading && <h3>Loading...</h3>}
+        {error && <h3 style={{color:'red'}}>{error.message}</h3>}
+      </div>
     </div>
   );
 };

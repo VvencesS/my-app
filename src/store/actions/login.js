@@ -1,31 +1,39 @@
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT } from "./types";
+import actionTypes from "./types";
 
-export const login = (data) => {
-  return {
-    type: LOGIN_SUCCESS,
-    payload: data,
-  };
-  // return LoginService.login(data).then(
-  //   (results) => {
-  //     dispatch({
-  //       type: LOGIN_SUCCESS,
-  //       payload: { results: results },
-  //     });
-  //     return Promise.resolve();
-  //   },
-  //   (error) => {
-  //     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-  //     dispatch({
-  //       type: LOGIN_FAIL,
-  //       payload: message,
-  //     });
-  //     return Promise.reject();
-  //   }
-  // );
-};
+const loginLoading = () => ({
+  type: actionTypes.LOGIN_LOADING,
+});
 
-export const logout = () => {
-  return {
-    type: LOGOUT,
-  };
+const loginSuccess = (data) => ({
+  type: actionTypes.LOGIN_SUCCESS,
+  payload: data,
+});
+
+const loginFail = (error) => ({
+  type: actionTypes.LOGIN_FAIL,
+  payload: error,
+});
+
+const logoutLoading = () => ({
+  type: actionTypes.LOGOUT_LOADING,
+});
+
+const logoutSuccess = () => ({
+  type: actionTypes.LOGOUT_SUCCESS,
+});
+
+const logoutFail = (error) => ({
+  type: actionTypes.LOGOUT_FAIL,
+  payload: error,
+});
+
+
+export default {
+  loginLoading,
+  loginSuccess,
+  loginFail,
+
+  logoutLoading,
+  logoutSuccess,
+  logoutFail,
 };

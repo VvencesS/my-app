@@ -1,29 +1,35 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import React, { Fragment } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Dashboard from "./pages/Dashboard.js";
-import Login from "./pages/Login.js";
+import { publicRoutes, privateRoutes } from "./routes";
+import DefaultLayout from "./components/Layout";
 
 const App = () => {
   return (
-    <Router>
-      <Switch>
-        <Route path="/login">
-          <Login />
-        </Route>
+    <BrowserRouter>
+      <DefaultLayout>
+        <Routes>
+          {publicRoutes.map((route, index) => {
+            const Layout = route.layout === null ? Fragment : DefaultLayout;
 
-        <Route path="/dashboard">
-          <Dashboard />
-        </Route>
-
-        <Redirect to="/login" />
-      </Switch>
-    </Router>
+            const Page = route.component;
+            return (
+              <Route key={index + "pub"} path={route.path} element={<Page />} />
+            );
+          })}
+          {privateRoutes.map((route, index) => {
+            const Layout = route.layout || DefaultLayout;
+            const Page = route.component;
+            return (
+              <Route key={index + "pri"} path={route.path} element={<Page />} />
+            );
+          })}
+          {/* <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </DefaultLayout>
+    </BrowserRouter>
   );
 };
 

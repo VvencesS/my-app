@@ -1,11 +1,20 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { applyMiddleware, combineReducers, compose, createStore } from "@reduxjs/toolkit";
+import thunk from "redux-thunk";
 
-import counter from "./reducers/counter";
-import login from "./reducers/login";
+import loginReducers from "./reducers/login";
 
-export default configureStore({
-  reducer: {
-    counter,
-    login,
-  },
-});
+const configureStore = () => {
+  const middlewares = [thunk];
+  const composeEnhancers =
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const enhancers = composeEnhancers(applyMiddleware(...middlewares));
+  
+  const store = createStore(
+    combineReducers({ login: loginReducers }),
+    enhancers
+  );
+
+  return store;
+};
+
+export default configureStore;

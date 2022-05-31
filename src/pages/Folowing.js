@@ -6,7 +6,7 @@ import { logout } from "../thunks/login";
 
 import "../css/Login.css";
 
-export default function Dashboard() {
+export default function Following() {
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.login);
@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   return (
     <div className="login-wrapper">
-      <h1>Dashboard</h1>
+      <h1>Following</h1>
       <h2>Welcome {userInfo.username ?? ""}</h2>
       <div className="form-group">
         <button
