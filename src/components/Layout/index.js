@@ -5,12 +5,12 @@ function DefaultLayout({ children }) {
   return (
     <div>
       <Header />
-      <div className="container-md">
+      <div className="container">
         <div className="row">
-          <div className="col-sm-4">
+          <div className="col-sm-2">
             <Sidebar />
           </div>
-          <div className="col-sm-8">
+          <div className="col-sm-10">
             <div className="content">{children}</div>
           </div>
         </div>

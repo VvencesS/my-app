@@ -12,9 +12,9 @@ export const loginAsync = (data) => (dispatch) => {
           JSON.stringify({
             username: response.data.username,
             roles: response.data.roles,
-            access_token: response.data.access_token,
           })
         );
+        localStorage.setItem("access_token", response.data.access_token);
       }
       dispatch(actions.loginSuccess(response.data));
     })
@@ -28,7 +28,8 @@ export const logout = () => async (dispatch) => {
   dispatch(actions.logoutLoading());
   await LoginService.logout();
   const userInfo = await JSON.parse(localStorage.getItem("userInfo"));
-  if (userInfo) {
+  const access_token = await JSON.parse(localStorage.getItem("access_token"));
+  if (userInfo || access_token) {
     await dispatch(
       actions.logoutFail(
         new Error({

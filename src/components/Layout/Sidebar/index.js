@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 
 function Sidebar() {
   
-  console.log('dfsgfsdgsdf');
   return (
     <ul>
       <li>
