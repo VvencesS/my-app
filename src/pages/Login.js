@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {  Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
-import { loginAsync } from "../thunks/login";
+import { login } from '../store/actions/authentication';
 
 import "../css/Login.css";
 import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -12,8 +11,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { isLoading, isLoggedIn, error } = useSelector((state) => state.login);
+  // const { isLoading, isLoggedIn, error } = useSelector((state) => state.login);
 
   const dispatch = useDispatch();
+
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,8 +24,9 @@ const Login = () => {
       username: username,
       password: password,
     };
-    
-    await dispatch(loginAsync(data));
+
+    dispatch(await login(data));
+
   };
 
   if (isLoggedIn) {
@@ -60,7 +63,7 @@ const Login = () => {
       </form>
       <div className="form-group">
         {isLoading && <h3>Loading...</h3>}
-        {error && <h3 style={{color:'red'}}>{error.message}</h3>}
+        {error && <h3 style={{ color: 'red' }}>{error.message}</h3>}
       </div>
     </div>
   );

@@ -1,33 +1,20 @@
-import actionTypes from "../actions/types";
 
-const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-const initialState = { isLoading: false, error: null, publicInfo: null }
+import * as ACTION_TYPES from '../../constants/action-types';
 
-const userReducers = (state = initialState, { type, payload }) => {
-  switch (type) {
-    case actionTypes.GETINFO_LOADING:
+const initialState = {
+  fullname: ""
+};
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ACTION_TYPES.USER_INFO_RETRIEVE_SUCCEEDED:
       return {
         ...state,
-        isLoading: true,
-        error: null,
-      };
-    case actionTypes.GETINFO_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        publicInfo: payload,
-        error: null,
-      };
-    case actionTypes.GETINFO_FAIL:
-      return {
-        ...state,
-        isLoading: false,
-        error: payload,
-      };
-
+        fullname: action?.payload?.data?.fullname ?? '',
+      }
     default:
       return state;
   }
 };
 
-export default userReducers;
+export default reducer;

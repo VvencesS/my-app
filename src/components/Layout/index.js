@@ -1,7 +1,22 @@
+import React, { useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { userInfoRetrieve } from '../../store/actions/user';
+
 
 function DefaultLayout({ children }) {
+
+  const dispatch = useDispatch();
+
+  const fetchUserInfo = async () => {
+    dispatch(await userInfoRetrieve())
+  };
+
+  useEffect(() => {
+    fetchUserInfo()
+  }, [])
+
   return (
     <div>
       <Header />

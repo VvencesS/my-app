@@ -4,13 +4,14 @@ import { useSelector } from "react-redux";
 
 import { publicRoutes, privateRoutes } from "./routes";
 import DefaultLayout from "./components/Layout";
-import Login from "./pages/Login";
 
 const App = () => {
-  const { isLoggedIn } = useSelector((state) => state.login);
+
+  const { accessToken } = useSelector((state) => state.login);
+
   return (
     <BrowserRouter>
-      {isLoggedIn
+      {accessToken?.length > 0
         ? (
           <DefaultLayout>
             <Routes>
