@@ -72,7 +72,7 @@ export default function Dashboard() {
         <button
           className="btn btn-primary btn-block"
           type="submit"
-          onClick={()=>handleLogout}
+          onClick={handleLogout}
         >
           Log out
         </button>

@@ -8,33 +8,41 @@ import Login from "./pages/Login";
 
 const App = () => {
   const { isLoggedIn } = useSelector((state) => state.login);
-
   return (
     <BrowserRouter>
-    {/* {isLoggedIn} */}
-      <DefaultLayout>
-        <Routes>
-          {publicRoutes.map((route, index) => {
-            const Page = route.component;
-            return (
-              <Route key={index + "pub"} path={route.path} element={<Page />} />
-            );
-          })}
-          {isLoggedIn &&
-            privateRoutes.map((route, index) => {
+      {isLoggedIn
+        ? (
+          <DefaultLayout>
+            <Routes>
+              {privateRoutes.map((route, index) => {
+                const Page = route.component;
+                return (
+                  <Route
+                    exact
+                    key={index + "pri"}
+                    path={route.path}
+                    element={<Page />}
+                  />
+                );
+              })}
+              <Route path="*" element={<Navigate to="/dashboard" />} />
+            </Routes>
+          </DefaultLayout>
+        )
+        : (
+          <Routes>
+            {publicRoutes.map((route, index) => {
               const Page = route.component;
               return (
                 <Route
-                  key={index + "pri"}
-                  path={route.path}
-                  element={<Page />}
-                />
+                  exact
+                  key={index + "pub"} path={route.path} element={<Page />} />
               );
             })}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </DefaultLayout>
-    </BrowserRouter>
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        )}
+    </BrowserRouter >
   );
 };
 
