@@ -2,38 +2,53 @@ import React, { Fragment } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { publicRoutes, privateRoutes } from "./routes";
-import DefaultLayout from "./components/Layout";
-import Login from "./pages/Login";
+import { publicRoutes } from "./routes";
+import Admin2 from "./components/Layout/Admin2";
+import dashRoutes from "./routes/routes";
 
 const App = () => {
-  const { isLoggedIn } = useSelector((state) => state.login);
-
+  console.log("App");
+  
+  const { accessToken } = useSelector((state) => state.login);
   return (
     <BrowserRouter>
-    {/* {isLoggedIn} */}
-      <DefaultLayout>
+      {accessToken?.length > 0 ? (
+        <Routes>
+          {dashRoutes.map((route, key) => {
+            const Page = route.component;
+            return (
+              <Route
+                path={route.path}
+                element={
+                  <Admin2>
+                    <Page />
+                  </Admin2>
+                }
+                key={key}
+              />
+            );
+          })}
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+        </Routes>
+      ) : (
         <Routes>
           {publicRoutes.map((route, index) => {
             const Page = route.component;
             return (
-              <Route key={index + "pub"} path={route.path} element={<Page />} />
+              <Route
+                key={index + "pub"}
+                path={route.path}
+                element={
+                  <Fragment>
+                    <Page />
+                  </Fragment>
+                }
+              />
             );
           })}
-          {isLoggedIn &&
-            privateRoutes.map((route, index) => {
-              const Page = route.component;
-              return (
-                <Route
-                  key={index + "pri"}
-                  path={route.path}
-                  element={<Page />}
-                />
-              );
-            })}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
-      </DefaultLayout>
+      )}
     </BrowserRouter>
   );
 };

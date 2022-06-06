@@ -1,63 +1,41 @@
-import actionTypes from "../actions/types";
+import * as actionTypes from "../../constants/action-types";
 
-const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-const initialState = userInfo
-  ? { isLoggedIn: true, isLoading: false, error: null, userInfo }
-  : { isLoggedIn: false, isLoading: false, error: null, userInfo: null };
+const initialState = {
+  accessToken: localStorage.getItem("accessToken"),
+  isLoggedIn: false,
+};
 
-const loginReducers = (state = initialState, { type, payload }) => {
-  switch (type) {
-    case actionTypes.LOGIN_LOADING:
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case actionTypes.USER_LOGIN_SUCCEEDED:
+      localStorage.setItem(
+        "accessToken",
+        action.payload.data.access_token || ""
+      );
       return {
         ...state,
-        isLoading: true,
-        isLoggedIn: false,
-        error: null,
-      };
-    case actionTypes.LOGIN_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
+        accessToken: action.payload.data.access_token || "",
         isLoggedIn: true,
-        userInfo: {
-          username: payload.username,
-          roles: payload.roles,
-          access_token: payload.access_token,
-        },
-        error: null,
-      };
-    case actionTypes.LOGIN_FAIL:
-      return {
-        ...state,
-        isLoading: false,
-        isLoggedIn: false,
-        error: payload,
       };
 
-    case actionTypes.LOGOUT_LOADING:
+    case actionTypes.USER_LOGOUT:
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("specializedBank");
       return {
         ...state,
-        isLoading: true,
-        error: null,
-      };
-    case actionTypes.LOGOUT_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
+        accessToken: "",
         isLoggedIn: false,
-        userInfo: null,
-        error: null,
       };
-    case actionTypes.LOGOUT_FAIL:
+    case actionTypes.USER_INFO_RETRIEVE_FAILED:
+      localStorage.removeItem("accessToken");
       return {
         ...state,
-        isLoading: false,
-        error: payload,
+        accessToken: "",
+        isLoggedIn: false,
       };
-
     default:
       return state;
   }
 };
 
-export default loginReducers;
+export default reducer;
