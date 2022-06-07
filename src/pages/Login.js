@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
 
 import { login } from "../store/actions/authentication";
 
@@ -16,13 +20,23 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!username || !password) {
+      NotificationManager.warning("Vui lòng nhập đủ tên đăng nhập và mật khẩu!");
+      return;
+    }
 
     const data = {
       username: username,
       password: password,
     };
 
-    dispatch(await login(data));
+    dispatch(await login(data))
+      .then((respone) => {
+        NotificationManager.success("Đăng nhập thành công!");
+      })
+      .catch((error) => {
+        NotificationManager.error("Tên tài khoản hoặc mật khẩu không đúng!");
+      });
   };
 
   if (isLoggedIn) {
@@ -90,6 +104,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <NotificationContainer />
     </div>
   );
 };

@@ -7,8 +7,10 @@ import { wrapper } from "./store";
 import App from "./App";
 
 import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/js/bootstrap.js";
 import "./assets/scss/now-ui-dashboard.scss?v1.5.0";
 import "./assets/css/demo.css";
+import 'react-notifications/lib/notifications.css';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

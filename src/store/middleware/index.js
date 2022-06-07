@@ -2,7 +2,6 @@ import axios from "axios";
 import axiosMiddleware from "redux-axios-middleware";
 
 const client = axios.create({
-  //all axios can be used, shown in axios documentation
   headers: {
     "Content-Type": "application/json",
   },

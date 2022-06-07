@@ -1,3 +1,4 @@
+import { BorderTop } from "@mui/icons-material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -133,7 +134,12 @@ function DemoNavbar2() {
                 <DropdownItem onClick={handleRedirect}>
                   Thông tin người dùng
                 </DropdownItem>
-                <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                <DropdownItem
+                  onClick={handleLogout}
+                  // className="border-top border-light"
+                >
+                  <b style={{ fontSize: 16 }}>Logout</b>
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </Nav>
