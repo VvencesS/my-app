@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Card,
@@ -12,16 +13,66 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import Select from "react-select";
+import { NotificationManager } from "react-notifications";
 
 import PanelHeader from "../../components/PanelHeader/PanelHeader";
 
+import { addCategory } from "../../store/actions/categorie";
+
 function CreateCategory() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [selectedOption, setSelectedOption] = useState(null);
   const options = [
     { value: true, label: "Active" },
     { value: false, label: "Inactive" },
   ];
-  const [selectedOption, setSelectedOption] = useState(null);
+  const initialValues = {
+    code: "",
+    name: "",
+    description: "",
+    status: true,
+  };
+
+  const validateForm = async (values) => {
+    const errors = {};
+    if (!values.code || !values.name) {
+      errors.code = "Required";
+      errors.name = "Required";
+      NotificationManager.warning(
+        "Trường mã và tên danh mục không được để trống!"
+      );
+    }
+    return errors;
+  };
+
+  const handleAdd = async (values, { setSubmitting }) => {
+    dispatch(
+      await addCategory(
+        values.code,
+        values.name,
+        values.description,
+        values.status
+      )
+    )
+      .then((respone) => {
+        NotificationManager.success(`Thêm bản ghi thành công!`);
+        navigate("/dashboard", { replace: true });
+      })
+      .catch((error) => {
+        NotificationManager.error("Có lỗi xảy ra!");
+      });
+    setTimeout(() => {
+      setSubmitting(false);
+    }, 400);
+  };
+
+  const handleCancel = async (e) => {
+    e.preventDefault();
+    navigate("/dashboard", { replace: true });
+  };
+
   return (
     <>
       <PanelHeader size="sm" />
@@ -35,19 +86,9 @@ function CreateCategory() {
               </CardHeader>
               <CardBody>
                 <Formik
-                  initialValues={{
-                    code: "",
-                    name: "",
-                    description: "",
-                    status: true,
-                  }}
-                  validate={(values) => {}}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    setTimeout(() => {
-                      alert(JSON.stringify(values, null, 2));
-                      setSubmitting(false);
-                    }, 400);
-                  }}
+                  initialValues={initialValues}
+                  validate={validateForm}
+                  onSubmit={handleAdd}
                 >
                   {({
                     values,
@@ -67,21 +108,27 @@ function CreateCategory() {
                       <Row>
                         <Col className="pr-1" md="6">
                           <FormGroup>
-                            <label>Mã</label>
+                            <label>
+                              Mã <span style={{ color: "red" }}>*</span>
+                            </label>
                             <Input
                               placeholder="Nhập mã danh mục..."
                               type="text"
                               name="code"
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Col>
                         <Col className="pl-1" md="6">
                           <FormGroup>
-                            <label>Tên</label>
+                            <label>
+                              Tên <span style={{ color: "red" }}>*</span>
+                            </label>
                             <Input
                               placeholder="Nhập tên danh mục..."
                               type="text"
                               name="name"
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Col>
@@ -96,6 +143,7 @@ function CreateCategory() {
                               rows="4"
                               type="textarea"
                               name="description"
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Col>
@@ -106,6 +154,7 @@ function CreateCategory() {
                               name="status"
                               className="custom-select"
                               style={{ fontSize: "0.8571em" }}
+                              onChange={handleChange}
                             >
                               <option value="true">Active</option>
                               <option value="false">Inactive</option>
@@ -129,6 +178,7 @@ function CreateCategory() {
                               className="btn btn-secondary"
                               data-dismiss="modal"
                               disabled={isSubmitting}
+                              onClick={handleCancel}
                             >
                               Hủy
                             </button>

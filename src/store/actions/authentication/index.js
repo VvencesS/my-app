@@ -1,6 +1,3 @@
-// login
-// logout
-// requestOTP
 import * as ACTION_TYPES from "../../../constants/action-types";
 
 export const login = async (data) => ({

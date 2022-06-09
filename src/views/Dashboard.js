@@ -42,8 +42,8 @@ function Dashboard() {
     debouncedSearch("");
   };
 
-  const changePage = (data) => {
-    dispatch(setPage(data));
+  const changePage = async (data) => {
+    dispatch(await setPage(data));
   };
 
   const changeRowsPerPage = async (data) => {

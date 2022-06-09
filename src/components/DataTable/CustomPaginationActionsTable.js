@@ -102,7 +102,6 @@ export default function CustomPaginationActionsTable({
           </TableHead>
           <TableBody>
             {categories
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>

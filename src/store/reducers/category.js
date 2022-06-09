@@ -26,6 +26,20 @@ const reducer = (state = initialState, action) => {
         msg: action?.payload?.error + " - " + action?.payload?.message,
       };
 
+    case ACTION_TYPES.ADD_CATEGORY_SUCCEEDED:
+      console.log(action);
+      return {
+        ...state,
+        success: true,
+        msg: action?.payload?.msg,
+      };
+    case ACTION_TYPES.ADD_CATEGORY_FAILED:
+      return {
+        ...state,
+        success: false,
+        msg: action?.payload?.msg,
+      };
+
     case ACTION_TYPES.DELETE_CATEGORY_SUCCEEDED:
       return {
         ...state,
