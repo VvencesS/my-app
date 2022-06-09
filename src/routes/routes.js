@@ -1,26 +1,10 @@
-/*!
-
-=========================================================
-* Now UI Dashboard React - v1.5.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/now-ui-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Dashboard from "../views/Dashboard";
 import Notifications from "../views/Notifications";
 import Icons from "../views/Icons";
 import Typography from "../views/Typography";
 import TableList from "../views/TableList";
 import UserPage from "../views/UserPage";
+import Create from "../views/category/Create";
 
 var dashRoutes = [
   {
@@ -29,6 +13,15 @@ var dashRoutes = [
     icon: "design_app",
     component: Dashboard,
     layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/category/create",
+    name: "Create category",
+    icon: "ui-1_simple-add",
+    component: Create,
+    layout: "/admin",
+    show: false,
   },
   {
     path: "/user-page",
@@ -36,6 +29,7 @@ var dashRoutes = [
     icon: "users_single-02",
     component: UserPage,
     layout: "/admin",
+    show: true,
   },
   {
     path: "/icons",
@@ -43,6 +37,7 @@ var dashRoutes = [
     icon: "design_image",
     component: Icons,
     layout: "/admin",
+    show: true,
   },
   {
     path: "/notifications",
@@ -50,6 +45,7 @@ var dashRoutes = [
     icon: "ui-1_bell-53",
     component: Notifications,
     layout: "/admin",
+    show: true,
   },
   {
     path: "/extended-tables",
@@ -57,6 +53,7 @@ var dashRoutes = [
     icon: "files_paper",
     component: TableList,
     layout: "/admin",
+    show: true,
   },
   {
     path: "/typography",
@@ -64,7 +61,9 @@ var dashRoutes = [
     icon: "design-2_ruler-pencil",
     component: Typography,
     layout: "/admin",
+    show: true,
   },
+  
   
 ];
 export default dashRoutes;

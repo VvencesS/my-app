@@ -14,7 +14,6 @@ import {
   Col,
 } from "reactstrap";
 
-// core components
 import PanelHeader from "../components/PanelHeader/PanelHeader";
 
 function User() {

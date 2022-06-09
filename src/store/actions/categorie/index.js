@@ -1,8 +1,11 @@
 import * as ACTION_TYPES from "../../../constants/action-types";
 
-export const getListOfCategories = async () => {
+export const getListOfCategories = async (max = 10, offset = 0, query = "") => {
   const authToken = await localStorage.getItem("accessToken");
-
+  const url =
+    query !== ""
+      ? `/api/category?max=${max}&offset=${offset}&query=${query}`
+      : `/api/category?max=${max}&offset=${offset}`;
   return {
     types: [
       ACTION_TYPES.GET_LIST_OF_CATEGORIES_REQUESTED,
@@ -12,7 +15,7 @@ export const getListOfCategories = async () => {
     payload: {
       request: {
         method: "GET",
-        url: `/api/category`,
+        url: url,
         headers: {
           Authorization: "Bearer " + authToken,
         },
@@ -23,7 +26,7 @@ export const getListOfCategories = async () => {
 
 export const deleteCategory = async (categoryId) => {
   const authToken = await localStorage.getItem("accessToken");
-
+  
   return {
     types: [
       ACTION_TYPES.DELETE_CATEGORY_REQUESTED,

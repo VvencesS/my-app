@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
@@ -7,55 +7,111 @@ import {
   CardTitle,
   Row,
   Col,
-  Table,
-  InputGroup,
-  Input,
+  Button,
 } from "reactstrap";
-import {
-  NotificationContainer,
-  NotificationManager,
-} from "react-notifications";
-import Modal from "../components/Modal/Modal";
+import { NotificationManager } from "react-notifications";
 import { debounce } from "lodash";
 import CustomPaginationActionsTable from "../components/DataTable/CustomPaginationActionsTable";
 
-import { getListOfCategories } from "../store/actions/categorie";
+import * as constants from "../constants/constants";
+
+import {
+  deleteCategory,
+  getListOfCategories,
+} from "../store/actions/categorie";
+import { setPage, setRowsPerPage, setSearchVal } from "../store/actions/table";
+import { removeItemId, setItemId, showModal } from "../store/actions/modal";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const dispatch = useDispatch();
-  const [categoryId, setCategoryId] = useState("");
-  const { categories } = useSelector((state) => state.category);
-  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  const { page, rowsPerPage, searchVal } = useSelector((state) => state.table);
 
   const debouncedSearch = debounce(async (criteria) => {
-    setSearch(criteria);
+    dispatch(await setSearchVal(criteria));
+    // call again api categories
+    await fetchCategories();
   }, 500);
 
-  const handleSearch = async (e) => {
-    debouncedSearch(e.target.value);
+  const fetchSearch = async (data) => {
+    debouncedSearch(data);
+  };
+
+  const cancelSearch = () => {
+    debouncedSearch("");
+  };
+
+  const changePage = (data) => {
+    dispatch(setPage(data));
+  };
+
+  const changeRowsPerPage = async (data) => {
+    dispatch(await setRowsPerPage(+data));
+    dispatch(await setPage(0));
+  };
+
+  const clickShowModal = async (id, title, content, actionType) => {
+    dispatch(await setItemId(id));
+    dispatch(
+      await showModal(title, content, {
+        acceptFunc:
+          actionType === constants.DELETE ? fetchDeleteCategory : () => {},
+        cancelFunc: clickCancel,
+      })
+    );
   };
 
   const fetchCategories = async () => {
-    dispatch(await getListOfCategories())
-      .then((respone) => {
-        NotificationManager.success("Lấy thông tin Category thành công!");
-        NotificationManager.info(
-          "Category có: " + respone.payload.data.categoryTotal + " bản ghi!"
-        );
-      })
+    dispatch(await getListOfCategories(rowsPerPage, page, searchVal))
+      .then((respone) => {})
       .catch((error) => {
         NotificationManager.error("Có lỗi xảy ra khi lấy danh sách Category!");
       });
   };
 
+  const fetchDeleteCategory = async (itemId) => {
+    dispatch(await deleteCategory(itemId))
+      .then((respone) => {
+        NotificationManager.success(`Xóa bản ghi id = ${itemId} thành công!`);
+      })
+      .catch((error) => {
+        NotificationManager.error(
+          "Không tìm thấy danh mục hoặc không xóa được danh mục này!"
+        );
+      });
+    dispatch(await removeItemId());
+  };
+
+  const clickCancel = async () => {
+    dispatch(await removeItemId());
+  };
+
+  const handleRedirectTo = (e) => {
+    e.preventDefault();
+    navigate("/category/create", { replace: true });
+  };
+
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [page, rowsPerPage, searchVal]);
 
-  console.log("Dashboard");
   return (
     <>
       <div className="content" style={{ marginTop: 100 }}>
+        <Row>
+          <Col xs={12} md={12}>
+            <div className="justify-content-end d-flex">
+              <form >
+                <Button className="btn btn-primary" onClick={handleRedirectTo}>
+                  <i className="now-ui-icons ui-1_simple-add"></i>
+                  &nbsp;
+                  Tạo mới
+                  </Button>
+              </form>
+            </div>
+          </Col>
+        </Row>
         <Row>
           <Col xs={12} md={12}>
             <Card>
@@ -64,100 +120,16 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <CustomPaginationActionsTable
-                  categories={categories}
-                  fetchCategories={fetchCategories}
+                  fetchSearch={fetchSearch}
+                  cancelSearch={cancelSearch}
+                  changePage={changePage}
+                  changeRowsPerPage={changeRowsPerPage}
+                  clickShowModal={clickShowModal}
                 />
               </CardBody>
             </Card>
           </Col>
         </Row>
-        <Row>
-          <Col xs={12} md={12}>
-            <Card>
-              <CardHeader>
-                <h5 className="card-category">All Category List</h5>
-                <CardTitle tag="h4">Categories</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="justify-content-end d-flex">
-                  <form style={{ width: 300 }}>
-                    <InputGroup className="no-border">
-                      <Input
-                        placeholder="Tìm kiếm..."
-                        onChange={handleSearch}
-                      />
-                    </InputGroup>
-                  </form>
-                </div>
-
-                <Table responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th className="text-center">Id</th>
-                      <th className="text-center">Code</th>
-                      <th className="text-center">Name</th>
-                      <th className="text-center">Description</th>
-                      <th className="text-center">Deleted</th>
-                      <th className="text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categories
-                      .filter(
-                        (row) =>
-                          !search.length ||
-                          row.code
-                            .toString()
-                            .toLowerCase()
-                            .includes(search.toString().toLowerCase()) ||
-                          row.name
-                            .toString()
-                            .toLowerCase()
-                            .includes(search.toString().toLowerCase())
-                      )
-                      .map((category, index) => (
-                        <tr key={index + 1}>
-                          <td>{index + 1}</td>
-                          <td>{category?.code ?? ""}</td>
-                          <td>{category?.name ?? ""}</td>
-                          <td>{category?.description ?? ""}</td>
-                          <td className="text-center">
-                            {category?.deleted === false ? (
-                              <i
-                                className="fa fa-ban"
-                                style={{ color: "red" }}
-                              ></i>
-                            ) : (
-                              <i
-                                className="fa fa-check"
-                                style={{ color: "green" }}
-                              ></i>
-                            )}
-                          </td>
-                          <td className="text-center">
-                            <button
-                              type="button"
-                              className="btn btn-danger"
-                              data-toggle="modal"
-                              data-target="#exampleModal"
-                              onClick={() => {
-                                setCategoryId(category?.id ?? "");
-                              }}
-                            >
-                              <i className="fa fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        <Modal categoryId={categoryId} fetchCategories={fetchCategories} />
-        <NotificationContainer />
       </div>
     </>
   );

@@ -1,0 +1,12 @@
+$light-brown: #DABCAA;
+$dark-grey: #5F6162;
+
+body {
+  .my-select {
+    background-color: transparent;
+    color: $dark-grey;
+    border: 0 none;
+    border-radius: 20px;
+    padding: 6px 20px;
+  }
+}

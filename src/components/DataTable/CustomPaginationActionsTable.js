@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,60 +9,53 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 
-import Modal from "../Modal/Modal";
-import { NotificationContainer } from "react-notifications";
 import { Input, InputGroup } from "reactstrap";
-import { debounce } from "@mui/material";
+
+import * as constants from "../../constants/constants";
 
 const columns = [
-  { id: "id", label: "Id", minWidth: 20, align: "center" },
+  { id: "stt", label: "STT", minWidth: 20, align: "center" },
   { id: "code", label: "Code", minWidth: 100, align: "center" },
   { id: "name", label: "Name", minWidth: 100, align: "center" },
   { id: "description", label: "Description", minWidth: 100, align: "center" },
-  { id: "deleted", label: "Deleted", minWidth: 100, align: "center" },
+  { id: "status", label: "Status", minWidth: 100, align: "center" },
   { id: "actions", label: "Actions", minWidth: 100, align: "center" },
 ];
 
 export default function CustomPaginationActionsTable({
-  categories,
-  fetchCategories,
+  fetchSearch,
+  cancelSearch,
+  changePage,
+  changeRowsPerPage,
+  clickShowModal,
 }) {
-  const [page, setPage] = React.useState(0);
-  const [categoryId, setCategoryId] = React.useState("");
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState(categories);
-  const [search, setSearch] = React.useState("");
+  const { categories, categoryTotal } = useSelector((state) => state.category);
+  const { page, rowsPerPage, searchVal } = useSelector((state) => state.table);
+
+  const handleClick = async (event) => {
+    const id = await event.currentTarget.attributes["id"].value;
+    await clickShowModal(
+      id,
+      "Xác nhận",
+      `Bạn chắc chắn muốn xóa bản ghi này? (id=${id})`, 
+      constants.DELETE
+    );
+  };
+
+  const handleCancel = async () => {
+    cancelSearch();
+  };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    changePage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  const handleChangeRowsPerPage = async (event) => {
+    changeRowsPerPage(event.target.value);
   };
-
-  const requestSearch = (searchVal) => {
-    const filteredRows = rows.filter((row) => {
-      return (
-        row.code.toLowerCase().includes(searchVal.toLowerCase()) ||
-        row.name.toLowerCase().includes(searchVal.toLowerCase())
-      );
-    });
-    // setRows(filteredRows);
-  };
-
-  const cancelSearch = () => {
-    setSearch("");
-    requestSearch(search);
-  };
-
-  const debouncedSearch = debounce(async (criteria) => {
-    setSearch(criteria);
-  }, 500);
 
   const handleSearch = async (e) => {
-    debouncedSearch(e.target.value);
+    fetchSearch(e.target.value);
   };
 
   return (
@@ -69,7 +63,25 @@ export default function CustomPaginationActionsTable({
       <div className="justify-content-end d-flex">
         <form style={{ width: 300 }}>
           <InputGroup className="no-border">
-            <Input placeholder="Tìm kiếm..." onChange={handleSearch} />
+            <Input
+              placeholder="Tìm kiếm..."
+              onChange={handleSearch}
+              value={searchVal}
+            />
+            {searchVal && (
+              <i
+                className="now-ui-icons ui-1_simple-remove"
+                style={{
+                  position: "absolute",
+                  right: "0.25rem",
+                  top: "0.7rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  zIndex: 10,
+                }}
+                onClick={handleCancel}
+              />
+            )}
           </InputGroup>
         </form>
       </div>
@@ -90,24 +102,12 @@ export default function CustomPaginationActionsTable({
           </TableHead>
           <TableBody>
             {categories
-              .filter(
-                (row) =>
-                  !search.length ||
-                  row.code
-                    .toString()
-                    .toLowerCase()
-                    .includes(search.toString().toLowerCase()) ||
-                  row.name
-                    .toString()
-                    .toLowerCase()
-                    .includes(search.toString().toLowerCase())
-              )
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+              .map((row, index) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row.id}
+                      {index + 1}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="left">
                       {row.code}
@@ -119,7 +119,7 @@ export default function CustomPaginationActionsTable({
                       {row.description}
                     </TableCell>
                     <TableCell style={{ width: 160 }} align="center">
-                      {row?.deleted === false ? (
+                      {row?.status === false ? (
                         <i className="fa fa-ban" style={{ color: "red" }}></i>
                       ) : (
                         <i
@@ -134,9 +134,8 @@ export default function CustomPaginationActionsTable({
                         className="btn btn-danger"
                         data-toggle="modal"
                         data-target="#exampleModal"
-                        onClick={() => {
-                          setCategoryId(row?.id);
-                        }}
+                        id={row?.id}
+                        onClick={handleClick}
                       >
                         <i className="fa fa-trash"></i>
                       </button>
@@ -150,14 +149,12 @@ export default function CustomPaginationActionsTable({
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={categories.length}
+        count={categoryTotal}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <Modal categoryId={categoryId} fetchCategories={fetchCategories} />
-      <NotificationContainer />
     </Paper>
   );
 }

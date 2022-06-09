@@ -11,6 +11,7 @@ import "bootstrap/dist/js/bootstrap.js";
 import "./assets/scss/now-ui-dashboard.scss?v1.5.0";
 import "./assets/css/demo.css";
 import 'react-notifications/lib/notifications.css';
+import "./assets/scss/select.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -2,6 +2,7 @@ import * as ACTION_TYPES from "../../constants/action-types";
 
 const initialState = {
   categories: [],
+  categoryTotal: 0,
   success: true,
   msg: "",
 };
@@ -12,6 +13,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         categories: action?.payload?.data?.categoryList ?? [],
+        categoryTotal: action?.payload?.data?.categoryTotal ?? 0,
         success: true,
         msg: "Có " + action?.payload?.data?.categoryTotal + " bản ghi",
       };
@@ -19,6 +21,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         categories: [],
+        categoryTotal: 0,
         success: false,
         msg: action?.payload?.error + " - " + action?.payload?.message,
       };

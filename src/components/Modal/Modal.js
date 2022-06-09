@@ -1,32 +1,17 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import {
-  NotificationContainer,
-  NotificationManager,
-} from "react-notifications";
-import {
-  deleteCategory,
-  getListOfCategories,
-} from "../../store/actions/categorie";
-export default ({ categoryId,  fetchCategories}) => {
-  const dispatch = useDispatch();
-  const fetchDeleteCategory = async () => {
-    dispatch(await deleteCategory(categoryId))
-      .then((respone) => {
-        NotificationManager.success(
-          `Xóa bản ghi id = ${categoryId} thành công!`
-        );
-      })
-      .catch((error) => {
-        NotificationManager.error(
-          "Không tìm thấy danh mục hoặc không xóa được danh mục này!"
-        );
-      });
+import { useSelector } from "react-redux";
+
+export default () => {
+  const { itemId, title, content, handleFunction } = useSelector(
+    (state) => state.modal
+  );
+
+  const handleAccept = async () => {
+    await handleFunction.acceptFunc(itemId);
   };
-  const handleDeleteCategory = async () => {
-    NotificationManager.info(`Đang xóa bản ghi id = ${categoryId}!`);
-    await fetchDeleteCategory();
-    await fetchCategories();
+
+  const handleCancel = async () => {
+    await handleFunction.cancelFunc();
   };
 
   return (
@@ -41,7 +26,7 @@ export default ({ categoryId,  fetchCategories}) => {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="exampleModalLabel">
-              Xác nhận
+              {title}
             </h5>
             <button
               type="button"
@@ -52,24 +37,24 @@ export default ({ categoryId,  fetchCategories}) => {
               <span aria-hidden="true">×</span>
             </button>
           </div>
-          <div className="modal-body">
-            Bạn chắc chắn muốn xóa bản ghi này (id={categoryId})?
-          </div>
+          <div className="modal-body">{content}</div>
           <div className="modal-footer">
             <button
               type="button"
               className="btn btn-secondary"
               data-dismiss="modal"
+              onClick={handleCancel}
             >
               Hủy
             </button>
+
             <button
               type="button"
               className="btn btn-danger"
               data-dismiss="modal"
-              onClick={handleDeleteCategory}
+              onClick={handleAccept}
             >
-              Xóa
+              Xác nhận
             </button>
           </div>
         </div>

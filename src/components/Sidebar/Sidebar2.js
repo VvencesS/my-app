@@ -5,8 +5,7 @@ import { Nav } from "reactstrap";
 import logo from "../../logo-white.svg";
 import dashRoutes from "../../routes/routes";
 
-function Sidebar({location}) {
-
+function Sidebar({ location }) {
   const activeRoute = (routeName) => {
     return location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
@@ -28,12 +27,14 @@ function Sidebar({location}) {
           {dashRoutes.map((route, key) => {
             if (route.redirect) return null;
             return (
-              <li className={activeRoute(route.path)} key={key}>
-                <NavLink to={route.path} className="nav-link">
-                  <i className={"now-ui-icons " + route.icon} />
-                  <p>{route.name}</p>
-                </NavLink>
-              </li>
+              route.show && (
+                <li className={activeRoute(route.path)} key={key}>
+                  <NavLink to={route.path} className="nav-link">
+                    <i className={"now-ui-icons " + route.icon} />
+                    <p>{route.name}</p>
+                  </NavLink>
+                </li>
+              )
             );
           })}
         </Nav>
