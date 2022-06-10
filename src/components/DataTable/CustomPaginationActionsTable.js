@@ -32,12 +32,11 @@ export default function CustomPaginationActionsTable({
   const { categories, categoryTotal } = useSelector((state) => state.category);
   const { page, rowsPerPage, searchVal } = useSelector((state) => state.table);
 
-  const handleClick = async (event) => {
-    const id = await event.currentTarget.attributes["id"].value;
-    await clickShowModal(
+  const handleClick = (id) => {
+    clickShowModal(
       id,
       "Xác nhận",
-      `Bạn chắc chắn muốn xóa bản ghi này? (id=${id})`, 
+      `Bạn chắc chắn muốn xóa bản ghi này? (id=${id})`,
       constants.DELETE
     );
   };
@@ -101,47 +100,43 @@ export default function CustomPaginationActionsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories
-              .map((row, index) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    <TableCell style={{ width: 160 }} align="center">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell style={{ width: 160 }} align="left">
-                      {row.code}
-                    </TableCell>
-                    <TableCell style={{ width: 160 }} align="left">
-                      {row.name}
-                    </TableCell>
-                    <TableCell style={{ width: 160 }} align="left">
-                      {row.description}
-                    </TableCell>
-                    <TableCell style={{ width: 160 }} align="center">
-                      {row?.status === false ? (
-                        <i className="fa fa-ban" style={{ color: "red" }}></i>
-                      ) : (
-                        <i
-                          className="fa fa-check"
-                          style={{ color: "green" }}
-                        ></i>
-                      )}
-                    </TableCell>
-                    <TableCell style={{ width: 160 }} align="center">
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        data-toggle="modal"
-                        data-target="#exampleModal"
-                        id={row?.id}
-                        onClick={handleClick}
-                      >
-                        <i className="fa fa-trash"></i>
-                      </button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+            {categories.map((row, index) => {
+              return (
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableCell style={{ width: 160 }} align="center">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="left">
+                    {row.code}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="left">
+                    {row.name}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="left">
+                    {row.description}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="center">
+                    {row?.status === false ? (
+                      <i className="fa fa-ban" style={{ color: "red" }}></i>
+                    ) : (
+                      <i className="fa fa-check" style={{ color: "green" }}></i>
+                    )}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="center">
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      data-toggle="modal"
+                      data-target="#exampleModal"
+                      id={row?.id}
+                      onClick={() => handleClick(row?.id)}
+                    >
+                      <i className="fa fa-trash"></i>
+                    </button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

@@ -2,10 +2,6 @@ import * as ACTION_TYPES from "../../../constants/action-types";
 
 export const getListOfCategories = async (max = 10, offset = 0, query = "") => {
   const authToken = await localStorage.getItem("accessToken");
-  const url =
-    query !== ""
-      ? `/api/category?max=${max}&offset=${offset}&query=${query}`
-      : `/api/category?max=${max}&offset=${offset}`;
   return {
     types: [
       ACTION_TYPES.GET_LIST_OF_CATEGORIES_REQUESTED,
@@ -15,7 +11,7 @@ export const getListOfCategories = async (max = 10, offset = 0, query = "") => {
     payload: {
       request: {
         method: "GET",
-        url: url,
+        url: `/api/category?max=${max}&offset=${offset}&query=${query??""}`,
         headers: {
           Authorization: "Bearer " + authToken,
         },

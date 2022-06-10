@@ -30,7 +30,6 @@ function Dashboard() {
 
   const debouncedSearch = debounce(async (criteria) => {
     dispatch(await setSearchVal(criteria));
-    // call again api categories
     await fetchCategories();
   }, 500);
 
@@ -103,7 +102,7 @@ function Dashboard() {
           <Col xs={12} md={12}>
             <div className="justify-content-end d-flex">
               <form >
-                <Button className="btn btn-primary" onClick={handleRedirectTo}>
+                <Button className="btn btn-info" onClick={handleRedirectTo}>
                   <i className="now-ui-icons ui-1_simple-add"></i>
                   &nbsp;
                   Tạo mới

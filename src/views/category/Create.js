@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  Button,
   Card,
   CardHeader,
   CardBody,
@@ -18,16 +17,12 @@ import { NotificationManager } from "react-notifications";
 import PanelHeader from "../../components/PanelHeader/PanelHeader";
 
 import { addCategory } from "../../store/actions/categorie";
+import { showModal } from "../../store/actions/modal";
 
 function CreateCategory() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [selectedOption, setSelectedOption] = useState(null);
-  const options = [
-    { value: true, label: "Active" },
-    { value: false, label: "Inactive" },
-  ];
   const initialValues = {
     code: "",
     name: "",
@@ -40,11 +35,22 @@ function CreateCategory() {
     if (!values.code || !values.name) {
       errors.code = "Required";
       errors.name = "Required";
-      NotificationManager.warning(
-        "Trường mã và tên danh mục không được để trống!"
-      );
+      // NotificationManager.warning(
+      //   "Trường mã và tên danh mục không được để trống!"
+      // );
     }
     return errors;
+  };
+
+  const clickShowModal = async (title, content, actionType) => {
+    dispatch(
+      await showModal(title, content, {
+        acceptFunc: () => {
+          navigate("/dashboard", { replace: true });
+        },
+        cancelFunc: () => {},
+      })
+    );
   };
 
   const handleAdd = async (values, { setSubmitting }) => {
@@ -70,7 +76,11 @@ function CreateCategory() {
 
   const handleCancel = async (e) => {
     e.preventDefault();
-    navigate("/dashboard", { replace: true });
+    clickShowModal(
+      "Xác nhận",
+      "Bạn chắc chắn muốn hủy thao tác đang thực hiện?",
+      null
+    );
   };
 
   return (
@@ -94,6 +104,7 @@ function CreateCategory() {
                     values,
                     errors,
                     touched,
+                    isValidating,
                     handleChange,
                     handleBlur,
                     handleSubmit,
@@ -164,24 +175,45 @@ function CreateCategory() {
                       </Row>
                       <Row>
                         <Col md="12">
-                          <div className="justify-content-center d-flex">
-                            <button
-                              type="submit"
-                              className="btn btn-info"
-                              data-dismiss="modal"
-                              disabled={isSubmitting}
-                            >
-                              Lưu
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-secondary"
-                              data-dismiss="modal"
-                              disabled={isSubmitting}
-                              onClick={handleCancel}
-                            >
-                              Hủy
-                            </button>
+                          <div className="justify-content-between d-flex">
+                            <div>
+                              <button
+                                type="button"
+                                className="btn btn-danger"
+                                data-dismiss="modal"
+                                data-toggle="modal"
+                                data-target="#exampleModal"
+                                disabled={isSubmitting}
+                                onClick={handleCancel}
+                              >
+                                <i className="now-ui-icons arrows-1_minimal-left"></i>
+                                &nbsp; Quay lại
+                              </button>
+                            </div>
+                            <div>
+                              <button
+                                type="submit"
+                                className="btn btn-info"
+                                data-dismiss="modal"
+                                disabled={isSubmitting && isValidating}
+                              >
+                                <i className="now-ui-icons ui-1_check"></i>
+                                &nbsp; Lưu
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-secondary"
+                                data-dismiss="modal"
+                                data-toggle="modal"
+                                data-target="#exampleModal"
+                                disabled={isSubmitting}
+                                onClick={handleCancel}
+                              >
+                                <i className="now-ui-icons ui-1_simple-remove"></i>
+                                &nbsp; Hủy
+                              </button>
+                            </div>
+                            <div></div>
                           </div>
                         </Col>
                       </Row>
