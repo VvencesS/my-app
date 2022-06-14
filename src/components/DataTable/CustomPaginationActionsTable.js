@@ -28,17 +28,22 @@ export default function CustomPaginationActionsTable({
   changePage,
   changeRowsPerPage,
   clickShowModal,
+  redirectToUpdatePage,
 }) {
   const { categories, categoryTotal } = useSelector((state) => state.category);
   const { page, rowsPerPage, searchVal } = useSelector((state) => state.table);
 
-  const handleClick = (id) => {
-    clickShowModal(
-      id,
-      "Xác nhận",
-      `Bạn chắc chắn muốn xóa bản ghi này? (id=${id})`,
-      constants.DELETE
-    );
+  const handleClick = (id, action) => {
+    if (action === constants.UPDATE) {
+      redirectToUpdatePage(id, "/category/update");
+    } else if (action === constants.DELETE) {
+      clickShowModal(
+        id,
+        "Xác nhận",
+        `Bạn chắc chắn muốn xóa bản ghi này? (id=${id})`,
+        constants.DELETE
+      );
+    }
   };
 
   const handleCancel = async () => {
@@ -125,11 +130,19 @@ export default function CustomPaginationActionsTable({
                   <TableCell style={{ width: 160 }} align="center">
                     <button
                       type="button"
+                      className="btn btn-info"
+                      id={row?.id}
+                      onClick={() => handleClick(row?.id, constants.UPDATE)}
+                    >
+                      <i className="fa fa-edit"></i>
+                    </button>
+                    <button
+                      type="button"
                       className="btn btn-danger"
                       data-toggle="modal"
                       data-target="#exampleModal"
                       id={row?.id}
-                      onClick={() => handleClick(row?.id)}
+                      onClick={() => handleClick(row?.id, constants.DELETE)}
                     >
                       <i className="fa fa-trash"></i>
                     </button>

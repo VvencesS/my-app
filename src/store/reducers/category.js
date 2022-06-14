@@ -21,35 +21,62 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         categories: [],
+        category: null,
         categoryTotal: 0,
         success: false,
         msg: action?.payload?.error + " - " + action?.payload?.message,
       };
 
-    case ACTION_TYPES.ADD_CATEGORY_SUCCEEDED:
-      console.log(action);
+    case ACTION_TYPES.READ_CATEGORY_SUCCEEDED:
       return {
         ...state,
-        success: true,
+        success: action?.payload?.success,
+        msg: action?.payload?.msg,
+        category: action?.payload?.data
+      };
+    case ACTION_TYPES.READ_CATEGORY_FAILED:
+      return {
+        ...state,
+        success: action?.payload?.success,
+        msg: action?.payload?.msg,
+      };
+
+    case ACTION_TYPES.ADD_CATEGORY_SUCCEEDED:
+      return {
+        ...state,
+        success: action?.payload?.success,
         msg: action?.payload?.msg,
       };
     case ACTION_TYPES.ADD_CATEGORY_FAILED:
       return {
         ...state,
-        success: false,
+        success: action?.payload?.success,
+        msg: action?.payload?.msg,
+      };
+
+    case ACTION_TYPES.UPDATE_CATEGORY_SUCCEEDED:
+      return {
+        ...state,
+        success: action?.payload?.success,
+        msg: action?.payload?.msg,
+      };
+    case ACTION_TYPES.UPDATE_CATEGORY_FAILED:
+      return {
+        ...state,
+        success: action?.payload?.success,
         msg: action?.payload?.msg,
       };
 
     case ACTION_TYPES.DELETE_CATEGORY_SUCCEEDED:
       return {
         ...state,
-        success: true,
+        success: action?.payload?.success,
         msg: action?.payload?.msg,
       };
     case ACTION_TYPES.DELETE_CATEGORY_FAILED:
       return {
         ...state,
-        success: false,
+        success: action?.payload?.success,
         msg: action?.payload?.msg,
       };
     default:

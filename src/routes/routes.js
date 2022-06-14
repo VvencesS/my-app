@@ -5,6 +5,7 @@ import Typography from "../views/Typography";
 import TableList from "../views/TableList";
 import UserPage from "../views/UserPage";
 import Create from "../views/category/Create";
+import Update from "../views/category/Update";
 
 var dashRoutes = [
   {
@@ -20,6 +21,14 @@ var dashRoutes = [
     name: "Create category",
     icon: "ui-1_simple-add",
     component: Create,
+    layout: "/admin",
+    show: false,
+  },
+  {
+    path: "/category/update",
+    name: "Update category",
+    icon: "ui-1_simple-add",
+    component: Update,
     layout: "/admin",
     show: false,
   },

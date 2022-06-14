@@ -50,6 +50,11 @@ function Dashboard() {
     dispatch(await setPage(0));
   };
 
+  const redirectToUpdatePage = async (id, url) => {
+    dispatch(await setItemId(id));
+    await handleRedirectTo(url)
+  };
+
   const clickShowModal = async (id, title, content, actionType) => {
     dispatch(await setItemId(id));
     dispatch(
@@ -86,9 +91,8 @@ function Dashboard() {
     dispatch(await removeItemId());
   };
 
-  const handleRedirectTo = (e) => {
-    e.preventDefault();
-    navigate("/category/create", { replace: true });
+  const handleRedirectTo = (url) => {
+    navigate(url, { replace: true });
   };
 
   useEffect(() => {
@@ -101,12 +105,14 @@ function Dashboard() {
         <Row>
           <Col xs={12} md={12}>
             <div className="justify-content-end d-flex">
-              <form >
-                <Button className="btn btn-info" onClick={handleRedirectTo}>
+              <form>
+                <Button
+                  className="btn btn-info"
+                  onClick={() => handleRedirectTo("/category/create")}
+                >
                   <i className="now-ui-icons ui-1_simple-add"></i>
-                  &nbsp;
-                  Tạo mới
-                  </Button>
+                  &nbsp; Tạo mới
+                </Button>
               </form>
             </div>
           </Col>
@@ -124,6 +130,7 @@ function Dashboard() {
                   changePage={changePage}
                   changeRowsPerPage={changeRowsPerPage}
                   clickShowModal={clickShowModal}
+                  redirectToUpdatePage={redirectToUpdatePage}
                 />
               </CardBody>
             </Card>
