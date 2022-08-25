@@ -4,8 +4,11 @@ import Icons from "../views/Icons";
 import Typography from "../views/Typography";
 import TableList from "../views/TableList";
 import UserPage from "../views/UserPage";
-import Create from "../views/category/Create";
-import Update from "../views/category/Update";
+import CreateCategory from "../views/category/Create";
+import UpdateCategory from "../views/category/Update";
+import ModalTypeInfo from "../views/ModalTypeInfo/List";
+import CreateModalTypeInfo from "../views/ModalTypeInfo/Create";
+import UpdateModalTypeInfo from "../views/ModalTypeInfo/Update";
 
 var dashRoutes = [
   {
@@ -20,7 +23,7 @@ var dashRoutes = [
     path: "/category/create",
     name: "Create category",
     icon: "ui-1_simple-add",
-    component: Create,
+    component: CreateCategory,
     layout: "/admin",
     show: false,
   },
@@ -28,7 +31,31 @@ var dashRoutes = [
     path: "/category/update",
     name: "Update category",
     icon: "ui-1_simple-add",
-    component: Update,
+    component: UpdateCategory,
+    layout: "/admin",
+    show: false,
+  },
+  {
+    path: "/modal-type-info",
+    name: "Modal type info",
+    icon: "files_paper",
+    component: ModalTypeInfo,
+    layout: "/admin",
+    show: true,
+  },
+  {
+    path: "/modal-type-info/create",
+    name: "Create Modal type info",
+    icon: "ui-1_simple-add",
+    component: CreateModalTypeInfo,
+    layout: "/admin",
+    show: false,
+  },
+  {
+    path: "/modal-type-info/update",
+    name: "Update Modal type info",
+    icon: "ui-1_simple-add",
+    component: UpdateModalTypeInfo,
     layout: "/admin",
     show: false,
   },
@@ -72,7 +99,5 @@ var dashRoutes = [
     layout: "/admin",
     show: true,
   },
-  
-  
 ];
 export default dashRoutes;

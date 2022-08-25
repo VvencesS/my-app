@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
@@ -10,24 +10,28 @@ import {
   Button,
 } from "reactstrap";
 import { NotificationManager } from "react-notifications";
-import { debounce } from "lodash";
-import CustomPaginationActionsTable from "../components/DataTable/CustomPaginationActionsTable";
-
-import * as constants from "../constants/constants";
-
-import {
-  deleteCategory,
-  getListOfCategories,
-} from "../store/actions/categorie";
-import { setPage, setRowsPerPage, setSearchVal } from "../store/actions/table";
-import { removeItemId, setItemId, showModal } from "../store/actions/modal";
 import { useNavigate } from "react-router-dom";
+import { debounce } from "lodash";
+import CustomPaginationActionsTable from "../../components/DataTable/CustomPaginationActionsTable";
 
-function Dashboard() {
+import * as constants from "../../constants/constants";
+import {
+  setPage,
+  setRowsPerPage,
+  setSearchVal,
+} from "../../store/actions/table";
+import { removeItemId, setItemId, showModal } from "../../store/actions/modal";
+import {
+  deleteModelTypeInfo,
+  getListOfModelTypeInfo,
+} from "../../store/actions/modelTypeInfo";
+
+function ModelTypeInfo() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { page, rowsPerPage, searchVal } = useSelector((state) => state.table);
-  const { categories, categoryTotal } = useSelector((state) => state.category);
+  const [modelTypeInfoList, setModelTypeInfoList] = useState([]);
+  const [modelTypeInfoTotal, setModelTypeInfoTotal] = useState(0);
   const columns = [
     { id: "stt", label: "STT", minWidth: 20, align: "center" },
     { id: "code", label: "Code", minWidth: 100, align: "center" },
@@ -39,7 +43,7 @@ function Dashboard() {
 
   const debouncedSearch = debounce(async (criteria) => {
     dispatch(await setSearchVal(criteria));
-    await fetchCategories();
+    await fetchModelTypeInfo();
   }, 500);
 
   const fetchSearch = async (data) => {
@@ -69,26 +73,37 @@ function Dashboard() {
     dispatch(
       await showModal(title, content, {
         acceptFunc:
-          actionType === constants.DELETE ? fetchDeleteCategory : () => {},
+          actionType === constants.DELETE ? fetchDeleteModelTypeInfo : () => {},
         cancelFunc: clickCancel,
       })
     );
   };
 
-  const fetchCategories = async () => {
-    dispatch(await getListOfCategories(rowsPerPage, page, searchVal))
-      .then((respone) => {})
+  const fetchModelTypeInfo = async () => {
+    dispatch(await getListOfModelTypeInfo(rowsPerPage, page, searchVal))
+      .then((response) => {
+        if (response?.payload?.data?.modelTypeInfoTotal > 0) {
+          setModelTypeInfoList(response?.payload?.data?.modelTypeInfoList);
+          setModelTypeInfoTotal(response?.payload?.data?.modelTypeInfoTotal);
+        }
+      })
       .catch((error) => {
-        NotificationManager.error("Có lỗi xảy ra khi lấy danh sách Category!");
+        console.error(error);
+        NotificationManager.error("Có lỗi xảy ra khi lấy danh sách!");
       });
   };
 
-  const fetchDeleteCategory = async (itemId) => {
-    dispatch(await deleteCategory(itemId))
-      .then((respone) => {
-        NotificationManager.success(`Xóa bản ghi id = ${itemId} thành công!`);
+  const fetchDeleteModelTypeInfo = async (itemId) => {
+    dispatch(await deleteModelTypeInfo(itemId))
+      .then((response) => {
+        if (response?.payload?.data?.success) {
+          NotificationManager.success(`Xóa bản ghi id = ${itemId} thành công!`);
+        } else {
+          NotificationManager.error(response?.payload?.data?.msg);
+        }
       })
       .catch((error) => {
+        console.error(error);
         NotificationManager.error(
           "Không tìm thấy danh mục hoặc không xóa được danh mục này!"
         );
@@ -105,7 +120,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchModelTypeInfo();
   }, [page, rowsPerPage, searchVal]);
 
   return (
@@ -117,7 +132,7 @@ function Dashboard() {
               <form>
                 <Button
                   className="btn btn-info"
-                  onClick={() => handleRedirectTo("/category/create")}
+                  onClick={() => handleRedirectTo("/modal-type-info/create")}
                 >
                   <i className="now-ui-icons ui-1_simple-add"></i>
                   &nbsp; Tạo mới
@@ -130,20 +145,20 @@ function Dashboard() {
           <Col xs={12} md={12}>
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Categories</CardTitle>
+                <CardTitle tag="h4">Model type info</CardTitle>
               </CardHeader>
               <CardBody>
                 <CustomPaginationActionsTable
                   columns={columns}
-                  list={categories}
-                  total={categoryTotal}
+                  list={modelTypeInfoList}
+                  total={modelTypeInfoTotal}
                   fetchSearch={fetchSearch}
                   cancelSearch={cancelSearch}
                   changePage={changePage}
                   changeRowsPerPage={changeRowsPerPage}
                   clickShowModal={clickShowModal}
                   redirectToUpdatePage={redirectToUpdatePage}
-                  urlRedirect="/category/update"
+                  urlRedirect="/modal-type-info/update"
                 />
               </CardBody>
             </Card>
@@ -154,4 +169,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default ModelTypeInfo;

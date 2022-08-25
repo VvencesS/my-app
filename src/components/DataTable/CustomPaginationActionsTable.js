@@ -13,29 +13,23 @@ import { Input, InputGroup } from "reactstrap";
 
 import * as constants from "../../constants/constants";
 
-const columns = [
-  { id: "stt", label: "STT", minWidth: 20, align: "center" },
-  { id: "code", label: "Code", minWidth: 100, align: "center" },
-  { id: "name", label: "Name", minWidth: 100, align: "center" },
-  { id: "description", label: "Description", minWidth: 100, align: "center" },
-  { id: "status", label: "Status", minWidth: 100, align: "center" },
-  { id: "actions", label: "Actions", minWidth: 100, align: "center" },
-];
-
 export default function CustomPaginationActionsTable({
+  columns,
+  list = [],
+  total = 0,
   fetchSearch,
   cancelSearch,
   changePage,
   changeRowsPerPage,
   clickShowModal,
   redirectToUpdatePage,
+  urlRedirect,
 }) {
-  const { categories, categoryTotal } = useSelector((state) => state.category);
   const { page, rowsPerPage, searchVal } = useSelector((state) => state.table);
 
   const handleClick = (id, action) => {
     if (action === constants.UPDATE) {
-      redirectToUpdatePage(id, "/category/update");
+      redirectToUpdatePage(id, urlRedirect);
     } else if (action === constants.DELETE) {
       clickShowModal(
         id,
@@ -70,7 +64,7 @@ export default function CustomPaginationActionsTable({
             <Input
               placeholder="Tìm kiếm..."
               onChange={handleSearch}
-              value={searchVal}
+              // value={searchVal}
             />
             {searchVal && (
               <i
@@ -105,7 +99,7 @@ export default function CustomPaginationActionsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories.map((row, index) => {
+            {list.map((row, index) => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                   <TableCell style={{ width: 160 }} align="center">
@@ -156,7 +150,7 @@ export default function CustomPaginationActionsTable({
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={categoryTotal}
+        count={total}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

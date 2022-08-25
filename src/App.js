@@ -7,8 +7,6 @@ import Admin2 from "./components/Layout/Admin2";
 import dashRoutes from "./routes/routes";
 
 const App = () => {
-  console.log("App");
-  
   const { accessToken } = useSelector((state) => state.login);
   return (
     <BrowserRouter>

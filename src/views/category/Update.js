@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Formik } from "formik";
+import { Field, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,10 +16,7 @@ import { NotificationManager } from "react-notifications";
 
 import PanelHeader from "../../components/PanelHeader/PanelHeader";
 
-import {
-  readCategory,
-  updateCategory,
-} from "../../store/actions/categorie";
+import { readCategory, updateCategory } from "../../store/actions/categorie";
 import { showModal } from "../../store/actions/modal";
 
 function UpdateCategory() {
@@ -44,11 +41,15 @@ function UpdateCategory() {
     fetchCategoryById();
   }, [itemId]);
 
+  const initStatus = [
+    { value: true, label: "Active" },
+    { value: false, label: "Inactive" },
+  ];
   const initialValues = {
-    code: "",
-    name: "",
-    description: "",
-    status: true,
+    code: category?.code ?? "",
+    name: category?.name ?? "",
+    description: category?.description ?? "",
+    status: category?.status ?? false,
   };
 
   const validateForm = async (values) => {
@@ -72,7 +73,7 @@ function UpdateCategory() {
   };
 
   const handleUpdate = async (values, { setSubmitting }) => {
-    console.log('handleUpdate');
+    console.log("handleUpdate");
     dispatch(
       await updateCategory(
         itemId,
@@ -84,6 +85,9 @@ function UpdateCategory() {
     )
       .then((respone) => {
         console.log(respone);
+        //         httpStatus: "OK"
+        // msg: "Mã danh mục đã tồn tại trong hệ thống!"
+        // success: false
         NotificationManager.success(`Thêm bản ghi thành công!`);
         navigate("/dashboard", { replace: true });
       })
@@ -121,6 +125,7 @@ function UpdateCategory() {
                   initialValues={initialValues}
                   validate={validateForm}
                   onSubmit={handleUpdate}
+                  enableReinitialize={true}
                 >
                   {({
                     values,
@@ -148,7 +153,7 @@ function UpdateCategory() {
                               placeholder="Nhập mã danh mục..."
                               type="text"
                               name="code"
-                              defaultValue={category?.code ?? ""}
+                              value={values.code}
                               onChange={handleChange}
                             />
                           </FormGroup>
@@ -162,7 +167,7 @@ function UpdateCategory() {
                               placeholder="Nhập tên danh mục..."
                               type="text"
                               name="name"
-                              defaultValue={category?.name ?? ""}
+                              value={values.name}
                               onChange={handleChange}
                             />
                           </FormGroup>
@@ -178,7 +183,7 @@ function UpdateCategory() {
                               rows="4"
                               type="textarea"
                               name="description"
-                              defaultValue={category?.description ?? ""}
+                              value={values.description}
                               onChange={handleChange}
                             />
                           </FormGroup>
@@ -186,16 +191,20 @@ function UpdateCategory() {
                         <Col md="2">
                           <FormGroup>
                             <label>Trạng thái</label>
-                            <select
-                              name="status"
-                              className="custom-select"
+                            <Field
                               style={{ fontSize: "0.8571em" }}
-                              defaultValue={category?.status ?? ""}
+                              name="status"
+                              as="select"
+                              className="custom-select"
                               onChange={handleChange}
+                              value={values.status}
                             >
-                              <option value="true">Active</option>
-                              <option value="false">Inactive</option>
-                            </select>
+                              {initStatus.map((item, index) => (
+                                <option value={item.value} key={index}>
+                                  {item.label}
+                                </option>
+                              ))}
+                            </Field>
                           </FormGroup>
                         </Col>
                       </Row>
